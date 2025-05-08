@@ -22,15 +22,15 @@ state_type state = IDLE;
 #define SENSOR_PIN_1 A1 // Pin for the first sensor
 #define SENSOR_PIN_2 A0 // Pin for the second sensor
 #define RELAY_PIN_1 2   // Pin for the first relay (pump 1)
-#define RELAY_PIN_2 13  // Pin for the second relay (pump 2)
+#define RELAY_PIN_2 4  // Pin for the second relay (pump 2)
 #define LED_PIN_1 13    // Pin for the first LED (plant 1)
 #define LED_PIN_2 12    // Pin for the second LED (plant 2)
 #define LED_WAIT 8      // Pin for the waiting
 //--------------------------------------------------------------//
 
 //----------------------- CONSTANT DEFINITIONS -----------------//
-#define HUMIDITY_THRESHOLD_1 370 // Threshold for the first sensor (moisture level)
-#define HUMIDITY_THRESHOLD_2 370 // Threshold for the second sensor (moisture level)
+#define HUMIDITY_THRESHOLD_1 435 // Threshold for the first sensor (moisture level) -v2.0
+#define HUMIDITY_THRESHOLD_2 400 // Threshold for the second sensor (moisture level) -v1.2  --TO FIX--
 // the two sensors may need a different calibration, so we can set different thresholds for each one. Above the threshold, the pump will be activated.
 #define HUMIDITY_MARGIN_ERROR 50 //  If the sensor value continues to rise without watering, it is considered an error.
 #define DELAY_ONEDAY 86400000    // 24 hours in milliseconds. If the sensor value does not drop after 24 hours from the irrigation, it is considered an error.
@@ -99,7 +99,7 @@ void loop()
   case WATER1:
     Serial.print("\nStato: WATER1");
     watering(); // Call the watering function to water plant 1
-    Serial.println("\t\t ~°w°~ Grootino è stato annaffiato ~°w°~ ");
+    Serial.println("\t ~°w°~ Grootino è stato annaffiato ~°w°~ ");
     break;
 
     //-------------------------------- WATER2 -----------------------------------//
@@ -107,6 +107,7 @@ void loop()
   case WATER2:
     Serial.println("\nStato: WATER2");
     watering(); // Call the watering function to water plant 2
+    Serial.println("\t -- Pina è stato annaffiata -- ");
     break;
 
     //-------------------------------- WAITING -----------------------------------//
@@ -143,7 +144,7 @@ void loop()
 void checkSensors()
 {
   valueSensor1 = analogRead(SENSOR_PIN_1);
-  // valueSensor2 = analogRead(SENSOR_PIN_2);
+  valueSensor2 = analogRead(SENSOR_PIN_2);
   printing();
 
   if (errorFlag1 or errorFlag2)
@@ -162,26 +163,26 @@ void checkSensors()
       state = WATER1; // Change state to WATER1 if the sensor value is above the threshold
     }
   }
-  // The two sensors are checked with else if because the technology is power saving and can only activate one pump at a time.
-  // else if (valueSensor2 > HUMIDITY_THRESHOLD_2)
-  // {
-  //   digitalWrite(LED_PIN_2, HIGH); // Turn on LED 2 if the soil is dry
-  //   if (valueSensor2 > HUMIDITY_THRESHOLD_2 + HUMIDITY_MARGIN_ERROR)
-  //   {
-  //     errorFlag2 = 1; // Set error flag if the sensor value continues to rise without watering
-  //   }
-  //   else if (errorFlag2 == 0)
-  //   {
-  //     state = WATER2; // Change state to WATER2 if the sensor value is above the threshold
-  //   }
-  // }
+  // The two sensors are checked with else if because the technology is power saving and can only activate one pump at a time and save energy.
+  else if (valueSensor2 > HUMIDITY_THRESHOLD_2)
+  {
+    digitalWrite(LED_PIN_2, HIGH); // Turn on LED 2 if the soil is dry
+    if (valueSensor2 > HUMIDITY_THRESHOLD_2 + HUMIDITY_MARGIN_ERROR)
+    {
+      errorFlag2 = 1; // Set error flag if the sensor value continues to rise without watering
+    }
+    else if (errorFlag2 == 0)
+    {
+      state = WATER2; // Change state to WATER2 if the sensor value is above the threshold
+    }
+  }
   else
   {
     // If both sensors are below the threshold, turn off both LEDs and reset the error flag
     digitalWrite(LED_PIN_1, LOW);
     digitalWrite(LED_PIN_2, LOW);
     digitalWrite(RELAY_PIN_1, LOW); // Turn off pump 1
-    // digitalWrite(RELAY_PIN_2, LOW); // Turn off pump 2
+    digitalWrite(RELAY_PIN_2, LOW); // Turn off pump 2
     errorFlag1 = 0;
     errorFlag2 = 0;
     state = WAITING_MEASURE; // Change state to WAITING_MEASURE if both sensors are below the threshold
@@ -223,19 +224,21 @@ void errorFound()
   digitalWrite(LED_PIN_1, HIGH);  // Turn on LED 1 to indicate error
   digitalWrite(LED_PIN_2, HIGH);  // Turn on LED 2 to indicate error
   digitalWrite(RELAY_PIN_1, LOW); // Turn off pump 1
-  // digitalWrite(RELAY_PIN_2, LOW; // Turn off pump 2
-  if (analogRead(SENSOR_PIN_1) < HUMIDITY_THRESHOLD_1)
+  digitalWrite(RELAY_PIN_2, LOW); // Turn off pump 2
+  if (analogRead(SENSOR_PIN_1) < HUMIDITY_THRESHOLD_1 & errorFlag1)
   {
     errorFlag1 = 0; // Reset error flag if the sensor value is below the threshold
     Serial.print(" NOPE.");
     Serial.println("\t Plant 1 has been watered correctly.");
     state = IDLE;
   }
-  // else if (analogRead(SENSOR_PIN_2) < HUMIDITY_THRESHOLD_2)
-  // {
-  //   errorFlag2 = 0; // Reset error flag if the sensor value is below the threshold
-  //   state = IDLE;
-  // }
+  else if (analogRead(SENSOR_PIN_2) < HUMIDITY_THRESHOLD_2 & errorFlag2)
+  {
+    errorFlag2 = 0; // Reset error flag if the sensor value is below the threshold
+    Serial.print(" NOPE.");
+    Serial.println("\t Plant 2 has been watered correctly.");
+    state = IDLE;
+  }
   else
   {
     Serial.println(" ERROR.");
@@ -248,8 +251,8 @@ void printing()
   // Print the sensor values to the Serial Monitor
   Serial.print("Sensor 1: ");
   Serial.println(valueSensor1);
-  // Serial.print(" Sensor 2: ");
-  // Serial.println(valueSensor2);
+  Serial.print(" Sensor 2: ");
+  Serial.println(valueSensor2);
   //  Print the last watering times to the Serial Monitor - sensor 1
   Serial.print(" Last watering time 1: ");
   if (lastWateringTime1 > millis())
@@ -258,12 +261,12 @@ void printing()
     time = (millis() - lastWateringTime1) / 1000; // Print the last watering time in seconds
   printingDate(time);
   // Print the last watering times to the Serial Monitor - sensor 2
-  // Serial.print("Last watering time 2: ");
-  // if (lastWateringTime2 > millis())
-  //   time = (lastWateringTime2 + millis()) / 1000; // Print the last watering time in seconds
-  // else
-  //   time = (millis() - lastWateringTime2) / 1000; // Print the last watering time in seconds
-  // printingDate(time);                             // Print the last watering time in seconds
+  Serial.print("Last watering time 2: ");
+  if (lastWateringTime2 > millis())
+    time = (lastWateringTime2 + millis()) / 1000; // Print the last watering time in seconds
+  else
+    time = (millis() - lastWateringTime2) / 1000; // Print the last watering time in seconds
+  printingDate(time);                             // Print the last watering time in seconds
 }
 
 void printingDate(unsigned long time)

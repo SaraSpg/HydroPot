@@ -1,5 +1,5 @@
-#define RELAY_PIN 12 // Pin for the first relay (pump 1)
-#define LED_PIN 4    // Pin for the first LED (plant 1)
+#define RELAY_PIN 4 // Pin for the first relay (pump 1)
+#define LED_PIN 12    // Pin for the first LED (plant 1)
 
 void setup()
 {
