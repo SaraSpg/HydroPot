@@ -18,6 +18,9 @@ void watering(int plantNumber) {
         // Update watering statistics for plant 1
         wateringCounter1++;
         lastWateringTime1 = millis();
+        
+        //after the watering absorption we check and set low the error flag  
+        errorFlag1 = true;
 
         // Stop watering and reset indicators
         digitalWrite(RELAY_PIN_1, LOW);   // Turn OFF pump for plant 1
@@ -42,6 +45,9 @@ void watering(int plantNumber) {
         // Update watering statistics for plant 2
         wateringCounter2++;
         lastWateringTime2 = millis();
+
+        //after the watering absorption we check and set low the error flag  
+        errorFlag2 = true;
 
         // Stop watering and reset indicators
         digitalWrite(RELAY_PIN_2, LOW);   // Turn OFF pump for plant 2

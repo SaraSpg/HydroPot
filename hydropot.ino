@@ -80,7 +80,7 @@ void loop()
     digitalWrite(LED_WAIT, HIGH);
     delay(DELAY_ONEDAY); // Normally 24h delay for water absorption
     digitalWrite(LED_WAIT, LOW);
-    state = IDLE;
+    state = ERROR;
     break;
 
   case ERROR:
