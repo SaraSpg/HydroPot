@@ -1,11 +1,8 @@
 #include <Arduino.h>
-#include "globals.h"
-#include "setup.h"
+#include "../globals/globals.h" // Include global variables
+#include "setupSystem.h"
 
 void setupSystem() {
-  pinMode(SENSOR_PIN_1, INPUT);
-  pinMode(SENSOR_PIN_2, INPUT);
-
   pinMode(RELAY_PIN_1, OUTPUT);
   pinMode(RELAY_PIN_2, OUTPUT);
   digitalWrite(RELAY_PIN_1, LOW);
@@ -13,14 +10,13 @@ void setupSystem() {
 
   pinMode(LED_PIN_1, OUTPUT);
   pinMode(LED_PIN_2, OUTPUT);
+  pinMode(LED_WAIT, OUTPUT);
   digitalWrite(LED_PIN_1, LOW);
   digitalWrite(LED_PIN_2, LOW);
-
-  pinMode(LED_WAIT, OUTPUT);
   digitalWrite(LED_WAIT, LOW);
 
-  Serial.begin(9600);
-  Serial.println("Sistema di irrigazione avviato.");
+  Serial.begin(115200);  // ESP32 va bene anche con 9600, ma 115200 è consigliato
+  Serial.println("Sistema di irrigazione (ESP32) avviato.");
 
   state = IDLE;
 }

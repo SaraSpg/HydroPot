@@ -10,20 +10,22 @@ extern const int RELAY_PIN_1;
 extern const int RELAY_PIN_2;
 extern const int LED_PIN_1;
 extern const int LED_PIN_2;
+extern const int LED_WAIT;
 
 // ----------- Thresholds ----------- //
 extern const int HUMIDITY_THRESHOLD_1;
 extern const int HUMIDITY_THRESHOLD_2;
 extern const int HUMIDITY_MARGIN_ERROR;
 extern const unsigned long DELAY_WATERING;
+extern const unsigned long DELAY_READING;
+extern const unsigned long DELAY_ONEDAY;
 
 // ----------- State Machine ----------- //
-enum SystemState
-{
+enum SystemState {
   IDLE,
-  WAITING_MEASURE,
   WATER1,
   WATER2,
+  WAITING_MEASURE,
   WAITING_WATER_ABSORPTION,
   ERROR
 };
@@ -40,9 +42,11 @@ extern int wateringCounter2;
 extern unsigned long lastWateringTime1;
 extern unsigned long lastWateringTime2;
 
-// ------------ Functions Declarations ------------ //
+// ------------ Functions Declarations (if needed) ------------ //
 void checkSensors();
-void watering();
+void watering(int plant);
 void errorFound();
 void printing();
 void printingDate(unsigned long time);
+
+#endif
