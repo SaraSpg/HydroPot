@@ -5,5 +5,6 @@
 #include "../globals/globals.h"  // Includi globals.h invece di riscrivere tutto
 
 void checkSensors();
+void updateSensorReadings();
 
 #endif

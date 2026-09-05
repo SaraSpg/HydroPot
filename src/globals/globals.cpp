@@ -10,8 +10,8 @@ const int LED_PIN_2   = 19;
 const int LED_WAIT    = 21;
 
 // ----------- Thresholds ----------- //
-const int HUMIDITY_THRESHOLD_1 = 500;
-const int HUMIDITY_THRESHOLD_2 = 500;
+const int HUMIDITY_THRESHOLD_1 = 150; //TODO: Check thresholds
+const int HUMIDITY_THRESHOLD_2 = 100;
 const int HUMIDITY_MARGIN_ERROR = 100;
 const unsigned long DELAY_WATERING = 3000;
 const unsigned long DELAY_READING  = 2000;
@@ -30,3 +30,4 @@ int wateringCounter1 = 0;
 int wateringCounter2 = 0;
 unsigned long lastWateringTime1 = 0;
 unsigned long lastWateringTime2 = 0;
+unsigned long waitingWaterAbsorptionStart = 0;

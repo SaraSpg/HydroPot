@@ -19,6 +19,7 @@ extern const int HUMIDITY_MARGIN_ERROR;
 extern const unsigned long DELAY_WATERING;
 extern const unsigned long DELAY_READING;
 extern const unsigned long DELAY_ONEDAY;
+extern unsigned long waitingWaterAbsorptionStart;
 
 // ----------- State Machine ----------- //
 enum SystemState {

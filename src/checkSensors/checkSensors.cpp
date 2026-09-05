@@ -70,3 +70,9 @@ void checkSensors()
     state = WAITING_MEASURE;
   }
 }
+
+void updateSensorReadings()
+{
+  valueSensor1 = analogRead(SENSOR_PIN_1);
+  valueSensor2 = analogRead(SENSOR_PIN_2);
+}
