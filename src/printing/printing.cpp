@@ -6,14 +6,25 @@
 void printing()
 {
     // -------------------------
-    // Sensor values
+    // Sensor values & Humidity
     // -------------------------
 
+    // Calculate humidity percentage: higher analog readings mean drier soil.
+    // When the sensor value reaches the threshold, moisture drops to 0% (triggering watering).
+    int humidityPercent1 = constrain(map(valueSensor1, HUMIDITY_THRESHOLD_1, HUMIDITY_THRESHOLD_1 - 1000, 0, 100), 0, 100);
+    int humidityPercent2 = constrain(map(valueSensor2, HUMIDITY_THRESHOLD_2, HUMIDITY_THRESHOLD_2 - 1000, 0, 100), 0, 100);
+
     Serial.print("Sensor 1: ");
-    Serial.println(valueSensor1);
+    Serial.print(valueSensor1);
+    Serial.print(" | Humidity: ");
+    Serial.print(humidityPercent1);
+    Serial.println("%");
 
     Serial.print("Sensor 2: ");
-    Serial.println(valueSensor2);
+    Serial.print(valueSensor2);
+    Serial.print(" | Humidity: ");
+    Serial.print(humidityPercent2);
+    Serial.println("%");
 
     // -------------------------
     // Plant 1

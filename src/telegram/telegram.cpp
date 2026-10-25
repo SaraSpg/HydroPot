@@ -131,6 +131,10 @@ void telegramHandleMessages()
             // interfering with the automatic irrigation process.
             updateSensorReadings();
 
+            // Calculate humidity percentages matching the sensor thresholds
+            int humidityPercent1 = constrain(map(valueSensor1, HUMIDITY_THRESHOLD_1, HUMIDITY_THRESHOLD_1 - 1000, 0, 100), 0, 100);
+            int humidityPercent2 = constrain(map(valueSensor2, HUMIDITY_THRESHOLD_2, HUMIDITY_THRESHOLD_2 - 1000, 0, 100), 0, 100);
+
             // Build the status message for Plant 1.
             String message =
                 "💧 *Last Watered*\n\n"
@@ -140,7 +144,7 @@ void telegramHandleMessages()
                 String(valueSensor1) +
                 "\n"
                 "💦 Humidity: " +
-                String((valueSensor1 * 100) / HUMIDITY_THRESHOLD_1) +
+                String(humidityPercent1) +
                 "%\n";
 
             // Check whether Plant 1 has ever been watered.
@@ -167,8 +171,8 @@ void telegramHandleMessages()
                 String(valueSensor2) +
                 "\n"
                 "💦 Humidity: " +
-                String((valueSensor2 * 100) / HUMIDITY_THRESHOLD_2) +
-                "%\n";  //TODO: Check the persentage calculation. 
+                String(humidityPercent2) +
+                "%\n";
 
             // Check whether Plant 2 has ever been watered.
             if (lastWateringTime2 == 0)

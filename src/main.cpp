@@ -1,3 +1,4 @@
+
 #include "Arduino.h"
 #include "globals/globals.h"
 #include "setupSystem/setupSystem.h"
@@ -7,10 +8,6 @@
 #include "printing/printing.h"
 #include "telegram/telegram.h"
 
-
-// ============================================================
-// SETUP
-// ============================================================
 
 void setup()
 {
@@ -22,21 +19,11 @@ void setup()
     telegramSetup();
 }
 
-
-// ============================================================
-// MAIN LOOP
-// ============================================================
-
 void loop()
 {
     // Check for new Telegram messages at every loop iteration.
     // Telegram monitoring runs independently from the FSM.
     telegramHandleMessages();
-
-
-    // ========================================================
-    // FINITE STATE MACHINE
-    // ========================================================
 
     switch (state)
     {
@@ -82,9 +69,7 @@ void loop()
 
         // Activate the pump associated with Plant 1.
         watering(1);
-
         Serial.println("\t Plant 1 watered.");
-
         break;
 
 
@@ -105,9 +90,7 @@ void loop()
 
         // Activate the pump associated with Plant 2.
         watering(2);
-
         Serial.println("\t Plant 2 watered.");
-
         break;
 
 
@@ -130,7 +113,6 @@ void loop()
 
         // Return to the normal monitoring state.
         state = IDLE;
-
         break;
 
 

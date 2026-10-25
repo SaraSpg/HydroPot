@@ -3,7 +3,7 @@
 ## Overview
 
 This project implements an automated irrigation system based on an ESP32, designed to water two plants independently according to real‑time soil moisture measurements.  
-The system reads two capacitive moisture sensors, controls two submersible pumps through relay modules, and uses LEDs to indicate system activity and waiting states.  
+The system reads two capacitive moisture sensors, controls two pumps through relay modules, and uses LEDs to indicate system activity and waiting states.  
 A finite state machine (FSM) ensures predictable behavior, modularity, and robust error handling.
 A Telegram bot is also implemented for remote monitoring.
 
@@ -23,12 +23,12 @@ A Telegram bot is also implemented for remote monitoring.
 ## Hardware Components
 
 - **ESP32 development board**
-- **2 capacitive soil moisture sensors (3.3 V)** for stable, corrosion‑free humidity measurement
-- **2 RUNCCI‑YUN DC 3–5 V mini submersible brushless pumps**
-- **3 m flexible transparent PVC tubing** for water delivery
-- **2 ARCELI 5 V single‑channel relay modules** to switch the pumps safely
-- **Status LEDs** for plant watering indication and waiting state feedback
-- External power supply suitable for pumps and relays
+- **2 capacitive soil moisture sensors** 
+- **2 pumps**
+- **2 relay modules**
+- **flexible transparent PVC tubing** 
+- **Status LEDs** 
+- External power supply (5V)
 
 ## Pin Configuration (ESP32)
 
@@ -38,26 +38,18 @@ A Telegram bot is also implemented for remote monitoring.
 | Sensor 2          | 35        |
 | Relay Pump 1      | 25        |
 | Relay Pump 2      | 26        |
-| LED Plant 1       | 18        |
-| LED Plant 2       | 19        |
+| LED Plant 1       | 17        |
+| LED Plant 2       | 2        |
 | LED Waiting State | 21        |
 
 ## Thresholds and Timing
 
-- **Moisture Threshold Sensor 1:** 500  
-- **Moisture Threshold Sensor 2:** 500  
-- **Error Margin:** 100  
-- **Watering Duration:** 3000 ms  
+- **Moisture Threshold Sensor 1:** 2700  
+- **Moisture Threshold Sensor 2:** 2200  
+- **Error Margin:** 500  
+- **Watering Duration:** 2000 ms  
 - **Sensor Reading Interval:** 2000 ms  
 - **Water Absorption Delay:** 24 h (86 400 000 ms)
-
-These parameters define the main operating conditions of the irrigation system. 
-The moisture thresholds determine when watering is required, while the error margin is used to detect abnormal sensor readings after watering (if the humindity has decreased after watering, raise an error). 
-The watering duration controls how long each pump remains active, and the reading interval determines how frequently the soil moisture is checked. 
-After watering, the system waits 24 hours to allow the water to be absorbed by the soil before continuing the monitoring process.
-**Note:** The moisture thresholds are defined separately for the two sensors because they are different sensor versions and may produce different readings under the same conditions.
-
-## Software Structure
 
 ## Software Structure
 
@@ -89,5 +81,3 @@ After watering, the system waits 24 hours to allow the water to be absorbed by t
   Contains the main `setup()` and `loop()` functions and manages the FSM by calling the appropriate modules.
 
 ---
-
-Enjoy your automated plant watering system 🌱💧

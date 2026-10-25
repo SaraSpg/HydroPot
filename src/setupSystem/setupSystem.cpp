@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "../globals/globals.h" // Include global variables
+#include "../globals/globals.h"
 #include "setupSystem.h"
 
 void setupSystem() {
@@ -15,7 +15,7 @@ void setupSystem() {
   digitalWrite(LED_PIN_2, LOW);
   digitalWrite(LED_WAIT, LOW);
 
-  Serial.begin(115200);  // ESP32 va bene anche con 9600, ma 115200 è consigliato
+  Serial.begin(115200);  
   Serial.println("Sistema di irrigazione (ESP32) avviato.");
 
   state = IDLE;
