@@ -3,3 +3,4 @@
 desktop.ini
 src/telegram/secrets.h
 Hydropot
+.gitignore
