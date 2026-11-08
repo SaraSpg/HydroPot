@@ -1,24 +1,36 @@
+
 #include "Arduino.h"
 #include "watering.h"
-#include "../globals/globals.h" // Include global variables
+#include "../globals/globals.h"
 #include "../telegram/telegram.h"
+
+
+// =====================================================
+// WATERING
+// =====================================================
 
 void watering(int plantNumber)
 {
-    // Handle watering logic for plant 1
+    // =================================================
+    // PLANT 1 — ENGLISH IVY
+    // =================================================
+
     if (plantNumber == 1)
     {
-        digitalWrite(RELAY_PIN_1, HIGH); // Turn ON pump for plant 1
-        digitalWrite(LED_PIN_1, HIGH);   // Turn ON status LED for plant 1
+        Serial.println("\nWatering Plant 1 — English Ivy");
 
-        // Ensure plant 2 is inactive while watering plant 1
-        digitalWrite(RELAY_PIN_2, LOW); // Turn OFF pump for plant 2
-        digitalWrite(LED_PIN_2, LOW);   // Turn OFF LED for plant 2
+        // Activate pump 1 and its status LED.
+        digitalWrite(RELAY_PIN_1, HIGH);
+        digitalWrite(LED_PIN_1, HIGH);
 
-        // Keep pump active for the configured watering duration
-        delay(DELAY_WATERING);
+        // Safety: ensure pump 2 is OFF.
+        digitalWrite(RELAY_PIN_2, LOW);
+        digitalWrite(LED_PIN_2, LOW);
 
-        // Update watering statistics for plant 1 and send notification
+        // Keep pump active for the configured duration.
+        delay(DELAY_WATERING_1);
+
+        // Record watering statistics.
         bool firstWatering = (wateringCounter1 == 0);
 
         unsigned long currentTime = millis();
@@ -31,38 +43,46 @@ void watering(int plantNumber)
         }
 
         wateringCounter1++;
+
         lastWateringTime1 = currentTime;
 
+        // Send Telegram watering notification.
         sendWateringNotification(
             1,
             elapsedTime,
-            firstWatering);
+            firstWatering
+        );
 
-        // after the watering absorption we check and set low the error flag
+        // Set error flag:
+        // Plant 1 must be checked after water absorption.
         errorFlag1 = true;
 
-        // Stop watering and reset indicators
-        digitalWrite(RELAY_PIN_1, LOW); // Turn OFF pump for plant 1
-        digitalWrite(LED_PIN_1, LOW);   // Turn OFF LED for plant 1
-
-        // Move to waiting state to allow water absorption
-        state = WAITING_WATER_ABSORPTION;
+        // Deactivate pump 1 and its LED.
+        digitalWrite(RELAY_PIN_1, LOW);
+        digitalWrite(LED_PIN_1, LOW);
     }
 
-    // Handle watering logic for plant 2
+
+    // =================================================
+    // PLANT 2 — ANTHURIUM POLYSCHISTUM
+    // =================================================
+
     else if (plantNumber == 2)
     {
-        digitalWrite(RELAY_PIN_2, HIGH); // Turn ON pump for plant 2
-        digitalWrite(LED_PIN_2, HIGH);   // Turn ON status LED for plant 2
+        Serial.println("\nWatering Plant 2 — Anthurium polyschistum");
 
-        // Ensure plant 1 is inactive while watering plant 2
-        digitalWrite(RELAY_PIN_1, LOW); // Turn OFF pump for plant 1
-        digitalWrite(LED_PIN_1, LOW);   // Turn OFF LED for plant 1
+        // Activate pump 2 and its status LED.
+        digitalWrite(RELAY_PIN_2, HIGH);
+        digitalWrite(LED_PIN_2, HIGH);
 
-        // Keep pump active for the configured watering duration
-        delay(DELAY_WATERING);
+        // Safety: ensure pump 1 is OFF.
+        digitalWrite(RELAY_PIN_1, LOW);
+        digitalWrite(LED_PIN_1, LOW);
 
-        // Update watering statistics for plant 2 and send notification
+        // Keep pump active for the configured duration.
+        delay(DELAY_WATERING_2);
+
+        // Record watering statistics.
         bool firstWatering = (wateringCounter2 == 0);
 
         unsigned long currentTime = millis();
@@ -75,22 +95,44 @@ void watering(int plantNumber)
         }
 
         wateringCounter2++;
+
         lastWateringTime2 = currentTime;
 
-        // Send Telegram notification
+        // Send Telegram watering notification.
         sendWateringNotification(
             2,
             elapsedTime,
-            firstWatering);
+            firstWatering
+        );
 
-        // after the watering absorption we check and set low the error flag
+        // Set error flag:
+        // Plant 2 must be checked after water absorption.
         errorFlag2 = true;
 
-        // Stop watering and reset indicators
-        digitalWrite(RELAY_PIN_2, LOW); // Turn OFF pump for plant 2
-        digitalWrite(LED_PIN_2, LOW);   // Turn OFF LED for plant 2
-
-        // Move to waiting state to allow water absorption
-        state = WAITING_WATER_ABSORPTION;
+        // Deactivate pump 2 and its LED.
+        digitalWrite(RELAY_PIN_2, LOW);
+        digitalWrite(LED_PIN_2, LOW);
     }
+
+
+    // =================================================
+    // WATER ABSORPTION WAITING PERIOD
+    // =================================================
+
+    else
+    {
+        Serial.println("\nInvalid plant number. Watering aborted.");
+        return;
+    }
+
+    // Reset the absorption timer.
+    // This is important when a manual watering request
+    // occurs during an existing absorption period.
+    waitingWaterAbsorptionStart = 0;
+
+    // Enter the waiting state after every watering operation.
+    state = WAITING_WATER_ABSORPTION;
+
+    Serial.println("\t Watering completed.");
+    Serial.println("\t Waiting for water absorption.");
 }

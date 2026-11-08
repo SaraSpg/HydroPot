@@ -10,10 +10,11 @@ const int LED_PIN_2   = 2;
 const int LED_WAIT    = 21;
 
 // ----------- Thresholds ----------- //
-const int HUMIDITY_THRESHOLD_1 = 2700; //TODO: Check thresholds
-const int HUMIDITY_THRESHOLD_2 = 2200;
+const int HUMIDITY_THRESHOLD_1 = 2300; //@ 08.11 - English Ivy
+const int HUMIDITY_THRESHOLD_2 = 2000; //@ 08.11 - Anthurium polyschistum
 const int HUMIDITY_MARGIN_ERROR = 500;
-const unsigned long DELAY_WATERING = 2000;
+const unsigned long DELAY_WATERING_1 = 1000;
+const unsigned long DELAY_WATERING_2 = 2000;
 const unsigned long DELAY_READING  = 2000;
 const unsigned long DELAY_ONEDAY   = 86400000UL;
 
